@@ -19,7 +19,6 @@ class StartActivity : AppCompatActivity() {
         val tag = fragment.javaClass.simpleName
 
         transaction.replace(R.id.container, fragment, tag)
-            .addToBackStack(tag)
             .commit()
     }
 }
