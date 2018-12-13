@@ -6,5 +6,6 @@ data class Launch(
     val startDate: Long,
     val dateLabel: String,
     val launchYear: Int,
-    val rocketId: String
+    val rocketId: String,
+    val imageUrl: String?
 )
