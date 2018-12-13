@@ -1,6 +1,7 @@
 package com.avolosko.spacex
 
 import android.app.Application
+import com.avolosko.spacex.Const.Companion.TIMEOUT
 import com.avolosko.spacex.api.RocketsService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -21,8 +22,8 @@ class SpaceXApplication : Application() {
 
     private fun initRocketService() {
         val client = OkHttpClient.Builder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .build()
 
         val retrofitBase = Retrofit.Builder()
