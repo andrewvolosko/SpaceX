@@ -1,10 +1,12 @@
 package com.avolosko.spacex.ui.details
 
 import com.avolosko.spacex.api.RocketsService
-import com.avolosko.spacex.api.Utils.Companion.callback
 import com.avolosko.spacex.api.mapper.LaunchMapper
 import com.avolosko.spacex.ui.Launch
 import lecho.lib.hellocharts.model.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class RocketDetailsPresenter(
     private var view: RocketDetailsContract.View?,
@@ -69,5 +71,17 @@ class RocketDetailsPresenter(
         data.lines = listOf(Line(yAxisValues))
         data.axisXBottom = Axis(axisValues)
         return data
+    }
+
+    fun <T> callback(success: ((Response<T>) -> Unit)?, failure: ((t: Throwable) -> Unit)? = null): Callback<T> {
+        return object : Callback<T> {
+            override fun onResponse(call: Call<T>, response: retrofit2.Response<T>) {
+                success?.invoke(response)
+            }
+
+            override fun onFailure(call: Call<T>, t: Throwable) {
+                failure?.invoke(t)
+            }
+        }
     }
 }

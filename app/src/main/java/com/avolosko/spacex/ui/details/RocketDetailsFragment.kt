@@ -36,6 +36,7 @@ class RocketDetailsFragment : Fragment(), RocketDetailsContract.View {
 
     //TODO use dagger
     private var presenter: RocketDetailsContract.Presenter? = null
+    private lateinit var rocketId: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_rocket_details, container, false)
@@ -51,6 +52,10 @@ class RocketDetailsFragment : Fragment(), RocketDetailsContract.View {
         detailsRV.adapter = adapter
 
         extractParams()
+
+        progress.setOnRefreshListener {
+            presenter!!.loadLaunches(rocketId)
+        }
     }
 
     override fun onStart() {
@@ -64,11 +69,11 @@ class RocketDetailsFragment : Fragment(), RocketDetailsContract.View {
     }
 
     private fun extractParams() {
-        val id = arguments!!.getString(ARG_ID)
+        rocketId = arguments!!.getString(ARG_ID)!!
         val description = arguments!!.getString(ARG_DESC)
 
         renderDescription(description!!)
-        presenter!!.loadLaunches(id!!)
+        presenter!!.loadLaunches(rocketId)
     }
 
     private fun renderDescription(label: String) {
