@@ -18,7 +18,7 @@ interface RocketListContract {
     }
 
     interface Presenter {
-        fun loadAllRockets()
+        fun loadAllRockets(active: Boolean)
 
         fun showAll()
 

@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.fragment_rocket.*
 class RocketsListFragment : Fragment(), RocketListContract.View {
 
     private lateinit var adapter: RocketsAdapter
-    private lateinit var alertDialog: AlertDialog
+    private var alertDialog: AlertDialog? = null
 
     //TODO use dagger
     private var presenter: RocketListContract.Presenter? = null
@@ -42,12 +42,12 @@ class RocketsListFragment : Fragment(), RocketListContract.View {
             if (isChecked) {
                 presenter!!.showActive()
             } else {
-                presenter!!.showActive()
+                presenter!!.showAll()
             }
         }
 
         progress.setOnRefreshListener {
-            presenter!!.loadAllRockets()
+            presenter!!.loadAllRockets(filter.isChecked)
         }
     }
 
@@ -64,6 +64,7 @@ class RocketsListFragment : Fragment(), RocketListContract.View {
     override fun onStart() {
         super.onStart()
         presenter?.start()
+        presenter?.loadAllRockets(filter.isChecked)
     }
 
     override fun onStop() {
@@ -77,11 +78,11 @@ class RocketsListFragment : Fragment(), RocketListContract.View {
             .setView(R.layout.dialog_welcome)
             .create()
 
-        alertDialog.show()
+        alertDialog!!.show()
     }
 
     override fun hideWelcome() {
-        alertDialog.hide()
+        alertDialog?.hide()
     }
 
     override fun showProgress() {
