@@ -1,0 +1,71 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply from: 'dependencies.gradle'
+
+androidExtensions {
+    experimental = true
+}
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        applicationId "com.avolosko.spacex"
+
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+
+        versionCode rootProject.ext.versionCode
+        versionName "${rootProject.ext.versionName}-${generateBuildBranchName()}-${generateBuildCommitHash()}"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        archivesBaseName = "helparound-$versionName($versionCode)"
+    }
+    buildTypes {
+
+        debug {
+            ext.betaDistributionGroupAliases = "dev"
+
+            applicationIdSuffix ".dev"
+            versionNameSuffix "-dev"
+
+            minifyEnabled false
+            useProguard false
+
+            testCoverageEnabled = true
+            debuggable true
+            signingConfig signingConfigs.debug
+        }
+
+
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard/butterknife.txt', 'proguard/crashlytics.txt', 'proguard/glide.txt', 'proguard/gson.txt', 'proguard/http.txt', 'proguard/retrofit.txt'
+
+            shrinkResources true
+            minifyEnabled true
+            useProguard true
+
+            ext.betaDistributionGroupAliases = "production"
+            ext.betaDistributionReleaseNotesFilePath = "changelog.txt"
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+def static generateBuildDate() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
+def static generateBuildBranchName() {
+    return "git rev-parse --abbrev-ref HEAD".execute().text.trim()
+}
+
+def static generateBuildCommitHash() {
+    return "git rev-parse --short HEAD".execute().text.trim()
+}

@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">SpaceX</string>
+
+    <string name="name">Name: %1s</string>
+    <string name="country">Country: %1s</string>
+    <string name="engines">Engines count: %1d</string>
+
+    <string name="show_all">Show all</string>
+    <string name="show_active">Show active</string>
+
+    <string name="missions">Missions: </string>
+    <string name="description">Description:</string>
+
+    <string name="error_general">Something wrong happen</string>
+</resources>
