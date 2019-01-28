@@ -4,8 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 
 class UserSettings(context: Context) {
-    private val PREFS_FILENAME = "com.avolosko.spacex.prefs"
-    private val FIRST_LAUNCH = "first_launch"
+
+    companion object {
+        const val PREFS_FILENAME = "com.avolosko.spacex.prefs"
+        const val FIRST_LAUNCH = "first_launch"
+    }
 
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_FILENAME, 0)
 

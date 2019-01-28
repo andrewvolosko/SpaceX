@@ -2,7 +2,7 @@ package com.avolosko.spacex.ui.list
 
 import android.content.Context
 import android.os.Handler
-import com.avolosko.spacex.Const.Companion.WELCOME_TIME
+import com.avolosko.spacex.WELCOME_TIME
 import com.avolosko.spacex.api.RocketsService
 import com.avolosko.spacex.api.mapper.RocketMapper
 import com.avolosko.spacex.core.UserSettings

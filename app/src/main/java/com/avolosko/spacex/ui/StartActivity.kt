@@ -1,7 +1,8 @@
-package com.avolosko.spacex
+package com.avolosko.spacex.ui
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import com.avolosko.spacex.R
 import com.avolosko.spacex.ui.list.RocketsListFragment
 
 class StartActivity : AppCompatActivity() {

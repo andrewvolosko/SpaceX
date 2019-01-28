@@ -1,7 +1,6 @@
 package com.avolosko.spacex
 
 import android.app.Application
-import com.avolosko.spacex.Const.Companion.TIMEOUT
 import com.avolosko.spacex.api.RocketsService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -27,7 +26,7 @@ class SpaceXApplication : Application() {
             .build()
 
         val retrofitBase = Retrofit.Builder()
-            .baseUrl(Const.BASE_URL)
+            .baseUrl(BASE_URL)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
