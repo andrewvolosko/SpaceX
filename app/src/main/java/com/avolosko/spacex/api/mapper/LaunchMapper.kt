@@ -1,6 +1,5 @@
 package com.avolosko.spacex.api.mapper
 
-import android.util.Log
 import com.avolosko.spacex.api.pojo.LaunchResponse
 import com.avolosko.spacex.ui.Launch
 import java.text.ParseException

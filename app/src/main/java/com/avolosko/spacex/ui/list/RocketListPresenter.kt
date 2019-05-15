@@ -3,20 +3,19 @@ package com.avolosko.spacex.ui.list
 import android.content.Context
 import android.os.Handler
 import com.avolosko.spacex.WELCOME_TIME
-import com.avolosko.spacex.api.RocketsService
-import com.avolosko.spacex.api.mapper.RocketMapper
 import com.avolosko.spacex.core.UserSettings
+import com.avolosko.spacex.data.RocketsRepository
 import com.avolosko.spacex.ui.AbsPresenter
 import com.avolosko.spacex.ui.Rocket
 
 class RocketListPresenter(
     context: Context,
     private var view: RocketListContract.View?,
-    private val rocketsService: RocketsService
+    private val repository: RocketsRepository
 ) :
     AbsPresenter(), RocketListContract.Presenter {
 
-    private var rockets: List<Rocket>? = null
+    private var rockets1: List<Rocket> = emptyList()
 
     //TODO use dagger
     private val userSettings = UserSettings(context)
@@ -41,36 +40,32 @@ class RocketListPresenter(
     override fun loadAllRockets(active: Boolean) {
         view?.showProgress()
 
-        rocketsService.getAllRockets().enqueue(
-            callback(
-                { response ->
-                    if (response.isSuccessful && response.body() != null) {
-                        rockets = RocketMapper().map(response.body()!!)
+        repository.getRockets(object : RocketsRepository.Callback {
+            override fun onSuccess(rockets: List<Rocket>) {
+                rockets1 = rockets
+                view?.hideProgress()
 
-                        if(active) {
-                            view?.renderRockets(rockets!!.filter { it.active })
-                        }else{
-                            view?.renderRockets(rockets!!)
-                        }
-                    } else {
-                        view?.renderError()
-                    }
-                    view?.hideProgress()
-                },
-                { th ->
-                    view?.hideProgress()
-                    view?.renderError()
-                })
-        )
+                if (active) {
+                    view?.renderRockets(rockets.filter { it.active })
+                } else {
+                    view?.renderRockets(rockets)
+                }
+            }
+
+            override fun onError() {
+                view?.hideProgress()
+                view?.renderError()
+            }
+        })
     }
 
     override fun showAll() {
-        view?.renderRockets(rockets!!)
+        view?.renderRockets(rockets1)
     }
 
     override fun showActive() {
-        if (rockets?.isNotEmpty() == true) {
-            view?.renderRockets(rockets!!.filter { it.active })
+        if (rockets1.isNotEmpty()) {
+            view?.renderRockets(rockets1.filter { it.active })
         }
     }
 }

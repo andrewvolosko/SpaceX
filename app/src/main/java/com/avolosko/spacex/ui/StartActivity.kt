@@ -19,7 +19,6 @@ class StartActivity : AppCompatActivity() {
         val transaction = supportFragmentManager.beginTransaction()
         val tag = fragment.javaClass.simpleName
 
-        transaction.replace(R.id.container, fragment, tag)
-            .commit()
+        transaction.replace(R.id.container, fragment, tag).commit()
     }
 }

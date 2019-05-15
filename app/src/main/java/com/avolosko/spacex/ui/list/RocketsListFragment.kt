@@ -10,11 +10,21 @@ import android.support.v7.widget.RecyclerView.VERTICAL
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.avolosko.spacex.BASE_URL
 import com.avolosko.spacex.R
-import com.avolosko.spacex.SpaceXApplication
+import com.avolosko.spacex.TIMEOUT
+import com.avolosko.spacex.api.RocketsApi
+import com.avolosko.spacex.api.endpoints.RocketsEndpoint
+import com.avolosko.spacex.api.mapper.RocketMapper
+import com.avolosko.spacex.data.RocketsRepositoryImpl
 import com.avolosko.spacex.ui.Rocket
 import com.avolosko.spacex.ui.details.RocketDetailsFragment
+import com.avolosko.spacex.util.AppExecutors
 import kotlinx.android.synthetic.main.fragment_rocket.*
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class RocketsListFragment : Fragment(), RocketListContract.View {
 
@@ -30,7 +40,22 @@ class RocketsListFragment : Fragment(), RocketListContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        presenter = RocketListPresenter(activity!!, this, SpaceXApplication.rocketsService!!)
+
+        val client = OkHttpClient.Builder()
+            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .build()
+
+        val retrofitBase = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val dataSource = RocketsApi(retrofitBase.create(RocketsEndpoint::class.java), RocketMapper())
+        val repository = RocketsRepositoryImpl(AppExecutors(), dataSource)
+
+        presenter = RocketListPresenter(activity!!, this, repository)
         adapter = RocketsAdapter {
             showRocketDetails(it)
         }
