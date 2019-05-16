@@ -1,14 +1,13 @@
 package com.avolosko.spacex.ui.details
 
-import com.avolosko.spacex.api.RocketsService
-import com.avolosko.spacex.api.mapper.LaunchMapper
+import com.avolosko.spacex.data.LaunchesRepository
 import com.avolosko.spacex.ui.AbsPresenter
 import com.avolosko.spacex.ui.Launch
 import lecho.lib.hellocharts.model.*
 
 class RocketDetailsPresenter(
     private var view: RocketDetailsContract.View?,
-    private val rocketsService: RocketsService
+    private val repository: LaunchesRepository
 ) :
     AbsPresenter(), RocketDetailsContract.Presenter {
 
@@ -23,27 +22,24 @@ class RocketDetailsPresenter(
     override fun loadLaunches(rocketId: String) {
         view?.showProgress()
 
-        rocketsService.getAllLaunches().enqueue(
-            callback(
-                { response ->
-                    if (response.isSuccessful && response.body() != null) {
-                        val allLaunches = LaunchMapper().map(response.body()!!)
-                        val graphData = prepareGraphData(allLaunches)
-                        view?.renderGraph(graphData)
 
-                        view?.renderLaunches(allLaunches.filter {
-                            it.rocketId == rocketId
-                        })
-                    } else {
-                        view?.renderError()
-                    }
-                    view?.hideProgress()
-                },
-                { th ->
-                    view?.hideProgress()
-                    view?.renderError()
+        repository.getLaunches(object : LaunchesRepository.Callback{
+            override fun onSuccess(launches: List<Launch>) {
+                view?.hideProgress()
+
+                val graphData = prepareGraphData(launches)
+                view?.renderGraph(graphData)
+
+                view?.renderLaunches(launches.filter {
+                    it.rocketId == rocketId
                 })
-        )
+            }
+
+            override fun onError() {
+                view?.hideProgress()
+                view?.renderError()
+            }
+        })
     }
 
     private fun prepareGraphData(all: List<Launch>): LineChartData {

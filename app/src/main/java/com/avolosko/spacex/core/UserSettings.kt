@@ -7,6 +7,7 @@ class UserSettings(context: Context) {
 
     companion object {
         const val PREFS_FILENAME = "com.avolosko.spacex.prefs"
+
         const val FIRST_LAUNCH = "first_launch"
     }
 
