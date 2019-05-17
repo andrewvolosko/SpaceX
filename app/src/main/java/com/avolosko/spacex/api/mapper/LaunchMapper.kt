@@ -1,7 +1,7 @@
 package com.avolosko.spacex.api.mapper
 
 import com.avolosko.spacex.api.pojo.LaunchResponse
-import com.avolosko.spacex.ui.Launch
+import com.avolosko.spacex.db.entity.LaunchEntity
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -10,9 +10,9 @@ class LaunchMapper {
 
     private val DATE_PATTERN = "dd/MM/yyyy HH:mm"
 
-    fun map(launches: List<LaunchResponse>): List<Launch> {
+    fun map(launches: List<LaunchResponse>): List<LaunchEntity> {
         return launches.map {
-            Launch(
+            LaunchEntity(
                 it.name,
                 it.launchStatus,
                 it.startDate,

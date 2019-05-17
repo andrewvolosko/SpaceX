@@ -16,6 +16,9 @@ import com.avolosko.spacex.api.LaunchesApi
 import com.avolosko.spacex.api.endpoints.LaunchesEndpoint
 import com.avolosko.spacex.api.mapper.LaunchMapper
 import com.avolosko.spacex.data.LaunchesRepositoryImpl
+import com.avolosko.spacex.db.AppDatabase
+import com.avolosko.spacex.db.LaunchesLocalDataSource
+import com.avolosko.spacex.db.entity.LaunchEntity
 import com.avolosko.spacex.ui.Launch
 import com.avolosko.spacex.util.AppExecutors
 import kotlinx.android.synthetic.main.fragment_rocket_details.*
@@ -67,7 +70,8 @@ class RocketDetailsFragment : Fragment(), RocketDetailsContract.View {
             .build()
 
         val dataSource = LaunchesApi(retrofitBase.create(LaunchesEndpoint::class.java), LaunchMapper())
-        val repository = LaunchesRepositoryImpl(AppExecutors(), dataSource)
+        val localDataSource = LaunchesLocalDataSource(AppDatabase.getInstance(activity!!).launchesDao())
+        val repository = LaunchesRepositoryImpl(AppExecutors(), dataSource, localDataSource)
 
         presenter = RocketDetailsPresenter(this, repository)
         adapter = RocketDetailsAdapter()
@@ -79,7 +83,7 @@ class RocketDetailsFragment : Fragment(), RocketDetailsContract.View {
         extractParams()
 
         progress.setOnRefreshListener {
-            presenter!!.loadLaunches(rocketId)
+            presenter!!.loadLaunches(true, rocketId)
         }
     }
 
@@ -98,7 +102,7 @@ class RocketDetailsFragment : Fragment(), RocketDetailsContract.View {
         val description = arguments!!.getString(ARG_DESC)
 
         renderDescription(description!!)
-        presenter!!.loadLaunches(rocketId)
+        presenter!!.loadLaunches(false, rocketId)
     }
 
     private fun renderDescription(label: String) {
@@ -109,7 +113,7 @@ class RocketDetailsFragment : Fragment(), RocketDetailsContract.View {
         chart.lineChartData = launches
     }
 
-    override fun renderLaunches(all: List<Launch>) {
+    override fun renderLaunches(all: List<LaunchEntity>) {
         adapter.setLaunches(all)
         adapter.notifyDataSetChanged()
     }

@@ -1,6 +1,7 @@
 package com.avolosko.spacex.ui.details
 
 import com.avolosko.spacex.data.LaunchesRepository
+import com.avolosko.spacex.db.entity.LaunchEntity
 import com.avolosko.spacex.ui.AbsPresenter
 import com.avolosko.spacex.ui.Launch
 import lecho.lib.hellocharts.model.*
@@ -19,12 +20,11 @@ class RocketDetailsPresenter(
         view = null
     }
 
-    override fun loadLaunches(rocketId: String) {
+    override fun loadLaunches(force: Boolean, rocketId: String) {
         view?.showProgress()
 
-
-        repository.getLaunches(object : LaunchesRepository.Callback{
-            override fun onSuccess(launches: List<Launch>) {
+        repository.getLaunches(force, object : LaunchesRepository.Callback {
+            override fun onSuccess(launches: List<LaunchEntity>) {
                 view?.hideProgress()
 
                 val graphData = prepareGraphData(launches)
@@ -42,7 +42,7 @@ class RocketDetailsPresenter(
         })
     }
 
-    private fun prepareGraphData(all: List<Launch>): LineChartData {
+    private fun prepareGraphData(all: List<LaunchEntity>): LineChartData {
         val yearLaunches = mutableMapOf<Int, Int>()
         all.forEach {
             if (yearLaunches.contains(it.launchYear)) {

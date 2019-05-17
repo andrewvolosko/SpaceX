@@ -5,8 +5,6 @@ import android.arch.persistence.room.PrimaryKey
 
 @Entity(tableName = "launches")
 data class LaunchEntity(
-    @PrimaryKey
-    val id: String,
     val name: String,
     val status: Boolean,
     val startDate: Long,
@@ -14,4 +12,6 @@ data class LaunchEntity(
     val launchYear: Int,
     val rocketId: String,
     val imageUrl: String?
-)
+) {
+    @PrimaryKey(autoGenerate = true) var id: Int = 0
+}

@@ -1,5 +1,6 @@
 package com.avolosko.spacex.ui.details
 
+import com.avolosko.spacex.db.entity.LaunchEntity
 import com.avolosko.spacex.ui.Launch
 import lecho.lib.hellocharts.model.LineChartData
 
@@ -8,7 +9,7 @@ interface RocketDetailsContract {
     interface View {
         fun renderGraph(chartData: LineChartData)
 
-        fun renderLaunches(all: List<Launch>)
+        fun renderLaunches(all: List<LaunchEntity>)
 
         fun renderError()
 
@@ -18,7 +19,7 @@ interface RocketDetailsContract {
     }
 
     interface Presenter {
-        fun loadLaunches(rocketId: String)
+        fun loadLaunches(force: Boolean, rocketId: String)
 
         fun start()
 

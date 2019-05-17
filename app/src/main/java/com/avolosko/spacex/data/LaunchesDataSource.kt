@@ -1,9 +1,10 @@
 package com.avolosko.spacex.data
 
-import com.avolosko.spacex.ui.Launch
+import com.avolosko.spacex.db.entity.LaunchEntity
 
 interface LaunchesDataSource {
 
-    fun getLaunches(): List<Launch>?
+    fun getLaunches(): List<LaunchEntity>?
 
+    fun saveLaunches(launches: List<LaunchEntity>)
 }

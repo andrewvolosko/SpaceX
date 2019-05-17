@@ -4,11 +4,12 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.avolosko.spacex.R
+import com.avolosko.spacex.db.entity.LaunchEntity
 import com.avolosko.spacex.ui.Launch
 
 class RocketDetailsAdapter : RecyclerView.Adapter<RocketLaunchViewHolder>() {
 
-    private var allLaunches = emptyList<Launch>()
+    private var allLaunches = emptyList<LaunchEntity>()
 
     override fun onCreateViewHolder(parent: ViewGroup, pos: Int): RocketLaunchViewHolder {
         return RocketLaunchViewHolder(
@@ -22,7 +23,7 @@ class RocketDetailsAdapter : RecyclerView.Adapter<RocketLaunchViewHolder>() {
         viewHolder.bind(allLaunches[pos])
     }
 
-    fun setLaunches(launches: List<Launch>) {
+    fun setLaunches(launches: List<LaunchEntity>) {
         allLaunches = launches
     }
 
