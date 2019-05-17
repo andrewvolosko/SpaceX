@@ -1,10 +1,10 @@
 package com.avolosko.spacex.ui.list
 
-import com.avolosko.spacex.ui.Rocket
+import com.avolosko.spacex.db.entity.RocketEntity
 
 interface RocketListContract {
     interface View {
-        fun renderRockets(items: List<Rocket>)
+        fun renderRockets(items: List<RocketEntity>)
 
         fun renderError()
 
@@ -18,7 +18,7 @@ interface RocketListContract {
     }
 
     interface Presenter {
-        fun loadAllRockets(active: Boolean)
+        fun loadAllRockets(force:Boolean, active: Boolean)
 
         fun showAll()
 

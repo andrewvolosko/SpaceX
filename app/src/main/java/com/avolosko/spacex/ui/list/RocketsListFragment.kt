@@ -17,7 +17,9 @@ import com.avolosko.spacex.api.RocketsApi
 import com.avolosko.spacex.api.endpoints.RocketsEndpoint
 import com.avolosko.spacex.api.mapper.RocketMapper
 import com.avolosko.spacex.data.RocketsRepositoryImpl
-import com.avolosko.spacex.ui.Rocket
+import com.avolosko.spacex.db.AppDatabase
+import com.avolosko.spacex.db.RocketsLocalDataSource
+import com.avolosko.spacex.db.entity.RocketEntity
 import com.avolosko.spacex.ui.details.RocketDetailsFragment
 import com.avolosko.spacex.util.AppExecutors
 import kotlinx.android.synthetic.main.fragment_rocket.*
@@ -53,7 +55,8 @@ class RocketsListFragment : Fragment(), RocketListContract.View {
             .build()
 
         val dataSource = RocketsApi(retrofitBase.create(RocketsEndpoint::class.java), RocketMapper())
-        val repository = RocketsRepositoryImpl(AppExecutors(), dataSource)
+        val localDataSource = RocketsLocalDataSource(AppDatabase.getInstance(activity!!).rocketsDao())
+        val repository = RocketsRepositoryImpl(AppExecutors(), dataSource, localDataSource)
 
         presenter = RocketListPresenter(activity!!, this, repository)
         adapter = RocketsAdapter {
@@ -72,11 +75,11 @@ class RocketsListFragment : Fragment(), RocketListContract.View {
         }
 
         progress.setOnRefreshListener {
-            presenter!!.loadAllRockets(filter.isChecked)
+            presenter!!.loadAllRockets(true, filter.isChecked)
         }
     }
 
-    private fun showRocketDetails(rocket: Rocket) {
+    private fun showRocketDetails(rocket: RocketEntity) {
         val fragment = RocketDetailsFragment.getInstance(rocket.id, rocket.description)
         val transaction = activity!!.supportFragmentManager.beginTransaction()
         val tag = fragment.javaClass.simpleName
@@ -89,7 +92,7 @@ class RocketsListFragment : Fragment(), RocketListContract.View {
     override fun onStart() {
         super.onStart()
         presenter?.start()
-        presenter?.loadAllRockets(filter.isChecked)
+        presenter?.loadAllRockets(false, filter.isChecked)
     }
 
     override fun onStop() {
@@ -118,7 +121,7 @@ class RocketsListFragment : Fragment(), RocketListContract.View {
         progress.isRefreshing = false
     }
 
-    override fun renderRockets(items: List<Rocket>) {
+    override fun renderRockets(items: List<RocketEntity>) {
         adapter.setRockets(items)
         adapter.notifyDataSetChanged()
     }

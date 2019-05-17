@@ -1,13 +1,13 @@
 package com.avolosko.spacex.api.mapper
 
 import com.avolosko.spacex.api.pojo.RocketResponse
-import com.avolosko.spacex.ui.Rocket
+import com.avolosko.spacex.db.entity.RocketEntity
 
 class RocketMapper {
 
-    fun map(items: List<RocketResponse>): List<Rocket> {
+    fun map(items: List<RocketResponse>): List<RocketEntity> {
         return items.map {
-            Rocket(it.id, it.name, it.description, it.country, it.engines.number, it.active)
+            RocketEntity(it.id, it.name, it.description, it.country, it.engines.number, it.active)
         }
     }
 }

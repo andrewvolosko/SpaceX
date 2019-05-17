@@ -7,20 +7,19 @@ import android.content.Context
 import com.avolosko.spacex.DATABASE_NAME
 import com.avolosko.spacex.db.dao.LaunchesDao
 import com.avolosko.spacex.db.dao.RocketsDao
+import com.avolosko.spacex.db.entity.LaunchEntity
+import com.avolosko.spacex.db.entity.RocketEntity
 import com.avolosko.spacex.ui.Launch
 import com.avolosko.spacex.ui.Rocket
 
-/**
- * The Room database for this app
- */
-@Database(entities = [Launch::class, Rocket::class], version = 1, exportSchema = false)
+
+@Database(entities = [LaunchEntity::class, RocketEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun launchesDao(): LaunchesDao
     abstract fun rocketsDao(): RocketsDao
 
     companion object {
 
-        // For Singleton instantiation
         @Volatile
         private var instance: AppDatabase? = null
 
@@ -30,11 +29,8 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        // Create and pre-populate the database. See this article for more details:
-        // https://medium.com/google-developers/7-pro-tips-for-room-fbadea4bfbd1#4785
         private fun buildDatabase(context: Context): AppDatabase {
-            return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
-                .build()
+            return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME).build()
         }
     }
 }

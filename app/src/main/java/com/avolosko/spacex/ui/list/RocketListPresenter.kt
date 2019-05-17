@@ -5,17 +5,16 @@ import android.os.Handler
 import com.avolosko.spacex.WELCOME_TIME
 import com.avolosko.spacex.core.UserSettings
 import com.avolosko.spacex.data.RocketsRepository
+import com.avolosko.spacex.db.entity.RocketEntity
 import com.avolosko.spacex.ui.AbsPresenter
-import com.avolosko.spacex.ui.Rocket
 
 class RocketListPresenter(
     context: Context,
     private var view: RocketListContract.View?,
     private val repository: RocketsRepository
-) :
-    AbsPresenter(), RocketListContract.Presenter {
+) : AbsPresenter(), RocketListContract.Presenter {
 
-    private var rockets1: List<Rocket> = emptyList()
+    private var localRockets: List<RocketEntity> = emptyList()
 
     //TODO use dagger
     private val userSettings = UserSettings(context)
@@ -37,12 +36,12 @@ class RocketListPresenter(
         view = null
     }
 
-    override fun loadAllRockets(active: Boolean) {
+    override fun loadAllRockets(force: Boolean, active: Boolean) {
         view?.showProgress()
 
-        repository.getRockets(object : RocketsRepository.Callback {
-            override fun onSuccess(rockets: List<Rocket>) {
-                rockets1 = rockets
+        repository.getRockets(force, object : RocketsRepository.Callback {
+            override fun onSuccess(rockets: List<RocketEntity>) {
+                localRockets = rockets
                 view?.hideProgress()
 
                 if (active) {
@@ -60,12 +59,10 @@ class RocketListPresenter(
     }
 
     override fun showAll() {
-        view?.renderRockets(rockets1)
+        view?.renderRockets(localRockets)
     }
 
     override fun showActive() {
-        if (rockets1.isNotEmpty()) {
-            view?.renderRockets(rockets1.filter { it.active })
-        }
+        view?.renderRockets(localRockets.filter { it.active })
     }
 }
