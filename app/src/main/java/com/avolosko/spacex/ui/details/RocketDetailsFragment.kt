@@ -19,7 +19,6 @@ import com.avolosko.spacex.data.LaunchesRepositoryImpl
 import com.avolosko.spacex.db.AppDatabase
 import com.avolosko.spacex.db.LaunchesLocalDataSource
 import com.avolosko.spacex.db.entity.LaunchEntity
-import com.avolosko.spacex.ui.Launch
 import com.avolosko.spacex.util.AppExecutors
 import kotlinx.android.synthetic.main.fragment_rocket_details.*
 import lecho.lib.hellocharts.model.LineChartData
