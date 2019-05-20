@@ -3,7 +3,6 @@ package com.avolosko.spacex.ui.details
 import com.avolosko.spacex.data.LaunchesRepository
 import com.avolosko.spacex.db.entity.LaunchEntity
 import com.avolosko.spacex.ui.AbsPresenter
-import com.avolosko.spacex.ui.Launch
 import lecho.lib.hellocharts.model.*
 
 class RocketDetailsPresenter(
@@ -23,16 +22,14 @@ class RocketDetailsPresenter(
     override fun loadLaunches(force: Boolean, rocketId: String) {
         view?.showProgress()
 
-        repository.getLaunches(force, object : LaunchesRepository.Callback {
+        repository.getLaunches(force,  object : LaunchesRepository.Callback {
             override fun onSuccess(launches: List<LaunchEntity>) {
                 view?.hideProgress()
 
-                val graphData = prepareGraphData(launches)
+                val filtered = launches.filter { it.rocketId == rocketId }
+                val graphData = prepareGraphData(filtered)
                 view?.renderGraph(graphData)
-
-                view?.renderLaunches(launches.filter {
-                    it.rocketId == rocketId
-                })
+                view?.renderLaunches(filtered)
             }
 
             override fun onError() {

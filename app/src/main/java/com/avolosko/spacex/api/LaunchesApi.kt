@@ -4,7 +4,6 @@ import com.avolosko.spacex.api.endpoints.LaunchesEndpoint
 import com.avolosko.spacex.api.mapper.LaunchMapper
 import com.avolosko.spacex.data.LaunchesDataSource
 import com.avolosko.spacex.db.entity.LaunchEntity
-import com.avolosko.spacex.ui.Launch
 import java.net.HttpURLConnection
 
 class LaunchesApi(

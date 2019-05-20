@@ -1,5 +1,6 @@
 package com.avolosko.spacex.data
 
+import com.avolosko.spacex.db.entity.LaunchEntity
 import com.avolosko.spacex.util.AppExecutors
 
 class LaunchesRepositoryImpl(
@@ -8,20 +9,25 @@ class LaunchesRepositoryImpl(
     private val localDataSource: LaunchesDataSource
 ) : LaunchesRepository {
 
+    private var cachedAllLaunches: List<LaunchEntity>? = null
+
     override fun getLaunches(force: Boolean, callback: LaunchesRepository.Callback) {
 
         if (force) {
             getCloudLaunches(callback)
-        } else {
+        } else if (cachedAllLaunches == null) {
             executors.diskIO().execute {
                 val launches = localDataSource.getLaunches()
 
                 if (launches == null || launches.isEmpty()) {
                     getCloudLaunches(callback)
                 } else {
-                    executors.mainThread().execute { callback.onSuccess(launches) }
+                    cachedAllLaunches = launches
+                    executors.mainThread().execute { callback.onSuccess(cachedAllLaunches!!) }
                 }
             }
+        } else {
+            executors.mainThread().execute { callback.onSuccess(cachedAllLaunches!!) }
         }
     }
 
@@ -32,8 +38,9 @@ class LaunchesRepositoryImpl(
             if (launches == null) {
                 executors.mainThread().execute { callback.onError() }
             } else {
+                cachedAllLaunches = launches
                 localDataSource.saveLaunches(launches)
-                executors.mainThread().execute { callback.onSuccess(launches) }
+                executors.mainThread().execute { callback.onSuccess(cachedAllLaunches!!) }
             }
         }
     }
