@@ -16,7 +16,7 @@ class RocketsRepositoryImpl(
             executors.diskIO().execute {
                 val rockets = localDataSource.getRockets()
 
-                if (rockets == null) {
+                if (rockets == null || rockets.isEmpty()) {
                     getCloudRockets(callback)
                 } else {
                     executors.mainThread().execute { callback.onSuccess(rockets) }

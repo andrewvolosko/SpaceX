@@ -16,7 +16,7 @@ class LaunchesRepositoryImpl(
             executors.diskIO().execute {
                 val launches = localDataSource.getLaunches()
 
-                if (launches == null) {
+                if (launches == null || launches.isEmpty()) {
                     getCloudLaunches(callback)
                 } else {
                     executors.mainThread().execute { callback.onSuccess(launches) }
