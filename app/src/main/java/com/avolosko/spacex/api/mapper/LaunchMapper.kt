@@ -13,6 +13,7 @@ class LaunchMapper {
     fun map(launches: List<LaunchResponse>): List<LaunchEntity> {
         return launches.map {
             LaunchEntity(
+                it.flightNumber,
                 it.name,
                 it.launchStatus,
                 it.startDate,

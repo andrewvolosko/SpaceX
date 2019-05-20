@@ -1,3 +1,6 @@
 package com.avolosko.spacex.api.pojo
 
-data class EnginesResponse(val number: Int, val type: String)
+import com.google.gson.annotations.SerializedName
+
+data class EnginesResponse(@SerializedName("number")val number: Int,
+                           @SerializedName("type") val type: String)
