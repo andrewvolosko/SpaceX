@@ -7,12 +7,15 @@ import android.arch.persistence.room.Query
 import com.avolosko.spacex.db.entity.LaunchEntity
 
 @Dao
-interface LaunchesDao{
+interface LaunchesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveLaunches(launches: List<LaunchEntity>)
 
     @Query("SELECT * FROM launches")
     fun getAllLaunches(): List<LaunchEntity>
+
+    @Query("SELECT * FROM launches WHERE rocketId = :rocketId")
+    fun getAllLaunchesForRocket(rocketId: String): List<LaunchEntity>
 
 }
