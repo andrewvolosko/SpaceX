@@ -1,10 +1,16 @@
 package com.avolosko.spacex.data
 
 import com.avolosko.spacex.util.AppExecutors
+import javax.inject.Inject
+import javax.inject.Named
 
-class RocketsRepositoryImpl(
+class RocketsRepositoryImpl @Inject constructor(
     private val executors: AppExecutors,
+
+    @Named("cloud")
     private val remoteDataSource: RocketsDataSource,
+
+    @Named("local")
     private val localDataSource: RocketsDataSource
 ) : RocketsRepository {
 

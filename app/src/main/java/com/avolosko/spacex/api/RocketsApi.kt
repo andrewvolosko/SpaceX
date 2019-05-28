@@ -5,8 +5,9 @@ import com.avolosko.spacex.api.mapper.RocketMapper
 import com.avolosko.spacex.data.RocketsDataSource
 import com.avolosko.spacex.db.entity.RocketEntity
 import java.net.HttpURLConnection
+import javax.inject.Inject
 
-class RocketsApi(
+class RocketsApi @Inject constructor(
     private val endpoint: RocketsEndpoint,
     private val mapper: RocketMapper
 ) : RocketsDataSource {

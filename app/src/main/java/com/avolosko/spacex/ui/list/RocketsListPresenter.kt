@@ -7,17 +7,15 @@ import com.avolosko.spacex.core.UserSettings
 import com.avolosko.spacex.data.RocketsRepository
 import com.avolosko.spacex.db.entity.RocketEntity
 import com.avolosko.spacex.ui.AbsPresenter
+import javax.inject.Inject
 
-class RocketListPresenter(
-    context: Context,
-    private var view: RocketListContract.View?,
+class RocketsListPresenter @Inject constructor(
+    private var userSettings: UserSettings,
+    private var view: RocketsListContract.View?,
     private val repository: RocketsRepository
-) : AbsPresenter(), RocketListContract.Presenter {
+) : AbsPresenter(), RocketsListContract.Presenter {
 
     private var localRockets: List<RocketEntity> = emptyList()
-
-    //TODO use dagger
-    private val userSettings = UserSettings(context)
 
     override fun start() {
         showWelcome()

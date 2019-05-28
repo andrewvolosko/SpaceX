@@ -2,7 +2,7 @@ package com.avolosko.spacex.ui.list
 
 import com.avolosko.spacex.db.entity.RocketEntity
 
-interface RocketListContract {
+interface RocketsListContract {
     interface View {
         fun renderRockets(items: List<RocketEntity>)
 

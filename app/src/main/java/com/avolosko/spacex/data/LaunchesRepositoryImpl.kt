@@ -2,8 +2,9 @@ package com.avolosko.spacex.data
 
 import com.avolosko.spacex.db.entity.LaunchEntity
 import com.avolosko.spacex.util.AppExecutors
+import javax.inject.Inject
 
-class LaunchesRepositoryImpl(
+class LaunchesRepositoryImpl @Inject constructor(
     private val executors: AppExecutors,
     private val remoteDataSource: LaunchesDataSource,
     private val localDataSource: LaunchesDataSource

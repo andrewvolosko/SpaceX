@@ -5,8 +5,9 @@ import com.avolosko.spacex.api.mapper.LaunchMapper
 import com.avolosko.spacex.data.LaunchesDataSource
 import com.avolosko.spacex.db.entity.LaunchEntity
 import java.net.HttpURLConnection
+import javax.inject.Inject
 
-class LaunchesApi(
+class LaunchesApi @Inject constructor(
     private val endpoint: LaunchesEndpoint,
     private val mapper: LaunchMapper
 ) : LaunchesDataSource {

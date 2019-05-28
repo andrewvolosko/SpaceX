@@ -5,8 +5,9 @@ import com.avolosko.spacex.db.entity.LaunchEntity
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-class LaunchMapper {
+class LaunchMapper @Inject constructor(){
 
     private val DATE_PATTERN = "dd/MM/yyyy HH:mm"
 

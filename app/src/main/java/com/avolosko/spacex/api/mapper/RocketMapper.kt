@@ -2,8 +2,9 @@ package com.avolosko.spacex.api.mapper
 
 import com.avolosko.spacex.api.pojo.RocketResponse
 import com.avolosko.spacex.db.entity.RocketEntity
+import javax.inject.Inject
 
-class RocketMapper {
+class RocketMapper @Inject constructor(){
 
     fun map(items: List<RocketResponse>): List<RocketEntity> {
         return items.map {

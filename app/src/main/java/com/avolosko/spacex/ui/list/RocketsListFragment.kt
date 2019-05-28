@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.avolosko.spacex.BASE_URL
 import com.avolosko.spacex.R
+import com.avolosko.spacex.SpaceXApplication
 import com.avolosko.spacex.TIMEOUT
 import com.avolosko.spacex.api.RocketsApi
 import com.avolosko.spacex.api.endpoints.RocketsEndpoint
@@ -21,20 +22,25 @@ import com.avolosko.spacex.db.AppDatabase
 import com.avolosko.spacex.db.RocketsLocalDataSource
 import com.avolosko.spacex.db.entity.RocketEntity
 import com.avolosko.spacex.ui.details.RocketDetailsFragment
+import com.avolosko.spacex.ui.internal.di.DaggerViewComponent
+import com.avolosko.spacex.ui.internal.di.PresentationModule
+import com.avolosko.spacex.ui.internal.di.ViewModule
 import com.avolosko.spacex.util.AppExecutors
 import kotlinx.android.synthetic.main.fragment_rocket.*
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class RocketsListFragment : Fragment(), RocketListContract.View {
+
+class RocketsListFragment : Fragment(), RocketsListContract.View {
 
     private lateinit var adapter: RocketsAdapter
     private var alertDialog: AlertDialog? = null
 
-    //TODO use dagger
-    private var presenter: RocketListContract.Presenter? = null
+    @Inject
+    lateinit var presenter: RocketsListContract.Presenter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_rocket, container, false)
@@ -42,6 +48,15 @@ class RocketsListFragment : Fragment(), RocketListContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val app = activity!!.application as SpaceXApplication
+
+        DaggerViewComponent.builder()
+            .applicationComponent(app.getApplicationComponent())
+            .viewModule(ViewModule(this))
+            .presentationModule(PresentationModule())
+            .build()
+            .inject(this)
 
         val client = OkHttpClient.Builder()
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
@@ -54,11 +69,11 @@ class RocketsListFragment : Fragment(), RocketListContract.View {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val dataSource = RocketsApi(retrofitBase.create(RocketsEndpoint::class.java), RocketMapper())
-        val localDataSource = RocketsLocalDataSource(AppDatabase.getInstance(activity!!).rocketsDao())
-        val repository = RocketsRepositoryImpl(AppExecutors(), dataSource, localDataSource)
-
-        presenter = RocketListPresenter(activity!!, this, repository)
+//        val dataSource = RocketsApi(retrofitBase.create(RocketsEndpoint::class.java), RocketMapper())
+//        val localDataSource = RocketsLocalDataSource(AppDatabase.getInstance(activity!!).rocketsDao())
+//        val repository = RocketsRepositoryImpl(AppExecutors(), dataSource, localDataSource)
+//
+//        presenter = RocketsListPresenter(activity!!, this, repository)
         adapter = RocketsAdapter {
             showRocketDetails(it)
         }
