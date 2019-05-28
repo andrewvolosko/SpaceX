@@ -1,6 +1,7 @@
 package com.avolosko.spacex.api.endpoints.internal.di
 
 import com.avolosko.spacex.BASE_URL
+import com.avolosko.spacex.TIMEOUT
 import com.avolosko.spacex.api.endpoints.LaunchesEndpoint
 import com.avolosko.spacex.api.endpoints.RocketsEndpoint
 import dagger.Module
@@ -16,10 +17,8 @@ import javax.inject.Singleton
 class EndpointsModule {
 
     private val client = OkHttpClient.Builder()
-        //.addInterceptor(HeaderInterceptor())
-        //.addNetworkInterceptor(RequestLogInterceptor())
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+        .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+        .readTimeout(TIMEOUT, TimeUnit.SECONDS)
         .build()
 
     @Provides

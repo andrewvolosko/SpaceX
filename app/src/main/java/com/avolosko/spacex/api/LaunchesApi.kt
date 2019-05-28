@@ -1,5 +1,6 @@
 package com.avolosko.spacex.api
 
+import android.util.Log
 import com.avolosko.spacex.api.endpoints.LaunchesEndpoint
 import com.avolosko.spacex.api.mapper.LaunchMapper
 import com.avolosko.spacex.data.LaunchesDataSource
@@ -19,6 +20,7 @@ class LaunchesApi @Inject constructor(
             return mapper.map(response.body()!!)
         }
 
+        Log.e("LaunchesApi", "failed get launches: " + response.code())
         return null
     }
 

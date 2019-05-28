@@ -10,27 +10,14 @@ import android.support.v7.widget.RecyclerView.VERTICAL
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.avolosko.spacex.BASE_URL
 import com.avolosko.spacex.R
 import com.avolosko.spacex.SpaceXApplication
-import com.avolosko.spacex.TIMEOUT
-import com.avolosko.spacex.api.RocketsApi
-import com.avolosko.spacex.api.endpoints.RocketsEndpoint
-import com.avolosko.spacex.api.mapper.RocketMapper
-import com.avolosko.spacex.data.RocketsRepositoryImpl
-import com.avolosko.spacex.db.AppDatabase
-import com.avolosko.spacex.db.RocketsLocalDataSource
 import com.avolosko.spacex.db.entity.RocketEntity
 import com.avolosko.spacex.ui.details.RocketDetailsFragment
 import com.avolosko.spacex.ui.internal.di.DaggerViewComponent
 import com.avolosko.spacex.ui.internal.di.PresentationModule
 import com.avolosko.spacex.ui.internal.di.ViewModule
-import com.avolosko.spacex.util.AppExecutors
 import kotlinx.android.synthetic.main.fragment_rocket.*
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -42,13 +29,12 @@ class RocketsListFragment : Fragment(), RocketsListContract.View {
     @Inject
     lateinit var presenter: RocketsListContract.Presenter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_rocket, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        onInitializeInjection()
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun onInitializeInjection() {
         val app = activity!!.application as SpaceXApplication
 
         DaggerViewComponent.builder()
@@ -57,23 +43,15 @@ class RocketsListFragment : Fragment(), RocketsListContract.View {
             .presentationModule(PresentationModule())
             .build()
             .inject(this)
+    }
 
-        val client = OkHttpClient.Builder()
-            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
-            .build()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_rocket, container, false)
+    }
 
-        val retrofitBase = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-//        val dataSource = RocketsApi(retrofitBase.create(RocketsEndpoint::class.java), RocketMapper())
-//        val localDataSource = RocketsLocalDataSource(AppDatabase.getInstance(activity!!).rocketsDao())
-//        val repository = RocketsRepositoryImpl(AppExecutors(), dataSource, localDataSource)
-//
-//        presenter = RocketsListPresenter(activity!!, this, repository)
         adapter = RocketsAdapter {
             showRocketDetails(it)
         }
@@ -83,14 +61,14 @@ class RocketsListFragment : Fragment(), RocketsListContract.View {
         rocketsRV.adapter = adapter
         filter.setOnCheckedChangeListener { buttonView, isChecked ->
             if (isChecked) {
-                presenter!!.showActive()
+                presenter.showActive()
             } else {
-                presenter!!.showAll()
+                presenter.showAll()
             }
         }
 
         progress.setOnRefreshListener {
-            presenter!!.loadAllRockets(true, filter.isChecked)
+            presenter.loadAllRockets(true, filter.isChecked)
         }
     }
 
@@ -106,13 +84,13 @@ class RocketsListFragment : Fragment(), RocketsListContract.View {
 
     override fun onStart() {
         super.onStart()
-        presenter?.start()
-        presenter?.loadAllRockets(false, filter.isChecked)
+        presenter.start()
+        presenter.loadAllRockets(false, filter.isChecked)
     }
 
     override fun onStop() {
         super.onStop()
-        presenter?.stop()
+        presenter.stop()
         hideWelcome()
     }
 
@@ -142,6 +120,6 @@ class RocketsListFragment : Fragment(), RocketsListContract.View {
     }
 
     override fun renderError() {
-        Snackbar.make(rootView, R.string.error_general, Snackbar.LENGTH_SHORT)
+        Snackbar.make(rootView, R.string.failed_load_rockets, Snackbar.LENGTH_SHORT)
     }
 }

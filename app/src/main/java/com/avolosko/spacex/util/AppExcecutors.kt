@@ -13,8 +13,7 @@ class AppExecutors internal constructor(
     constructor() : this(
         Executors.newSingleThreadExecutor(),
         Executors.newFixedThreadPool(THREAD_COUNT),
-        MainThreadExecutor()) {
-    }
+        MainThreadExecutor())
 
     fun diskIO(): Executor {
         return diskIO

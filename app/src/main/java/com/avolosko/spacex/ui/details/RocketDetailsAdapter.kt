@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.avolosko.spacex.R
 import com.avolosko.spacex.db.entity.LaunchEntity
-import com.avolosko.spacex.ui.Launch
 
 class RocketDetailsAdapter : RecyclerView.Adapter<RocketLaunchViewHolder>() {
 

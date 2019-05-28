@@ -9,8 +9,6 @@ import com.avolosko.spacex.db.dao.LaunchesDao
 import com.avolosko.spacex.db.dao.RocketsDao
 import com.avolosko.spacex.db.entity.LaunchEntity
 import com.avolosko.spacex.db.entity.RocketEntity
-import com.avolosko.spacex.ui.Launch
-import com.avolosko.spacex.ui.Rocket
 
 
 @Database(entities = [LaunchEntity::class, RocketEntity::class], version = 1, exportSchema = false)

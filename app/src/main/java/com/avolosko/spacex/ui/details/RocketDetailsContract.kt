@@ -1,28 +1,21 @@
 package com.avolosko.spacex.ui.details
 
 import com.avolosko.spacex.db.entity.LaunchEntity
-import com.avolosko.spacex.ui.Launch
+import com.avolosko.spacex.ui.AbsPresenter
+import com.avolosko.spacex.ui.AbsView
 import lecho.lib.hellocharts.model.LineChartData
 
 interface RocketDetailsContract {
 
-    interface View {
+    interface View : AbsView{
         fun renderGraph(chartData: LineChartData)
 
-        fun renderLaunches(all: List<LaunchEntity>)
+        fun renderLaunches(launches: List<LaunchEntity>)
 
         fun renderError()
-
-        fun showProgress()
-
-        fun hideProgress()
     }
 
-    interface Presenter {
+    interface Presenter : AbsPresenter{
         fun loadLaunches(force: Boolean, rocketId: String)
-
-        fun start()
-
-        fun stop()
     }
 }

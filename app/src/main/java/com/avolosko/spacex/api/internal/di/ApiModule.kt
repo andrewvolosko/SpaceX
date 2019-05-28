@@ -13,7 +13,7 @@ import javax.inject.Singleton
 @Module
 class ApiModule {
 
-
+    @Named("cloud")
     @Provides
     @Singleton
     fun providesLaunchesDataSource(api: LaunchesApi): LaunchesDataSource {

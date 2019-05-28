@@ -10,5 +10,8 @@
     <string name="missions">Missions: </string>
     <string name="description">Description:</string>
 
+    <string name="failed_load_launches">Something wrong happen</string>
+    <string name="failed_load_rockets">Something wrong happen</string>
+
     <string name="error_general">Something wrong happen</string>
 </resources>

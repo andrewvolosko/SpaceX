@@ -3,10 +3,15 @@ package com.avolosko.spacex.data
 import com.avolosko.spacex.db.entity.LaunchEntity
 import com.avolosko.spacex.util.AppExecutors
 import javax.inject.Inject
+import javax.inject.Named
 
 class LaunchesRepositoryImpl @Inject constructor(
     private val executors: AppExecutors,
+
+    @Named("cloud")
     private val remoteDataSource: LaunchesDataSource,
+
+    @Named("local")
     private val localDataSource: LaunchesDataSource
 ) : LaunchesRepository {
 

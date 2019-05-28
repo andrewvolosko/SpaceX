@@ -1,19 +1,17 @@
 package com.avolosko.spacex.ui.list
 
-import android.content.Context
 import android.os.Handler
 import com.avolosko.spacex.WELCOME_TIME
 import com.avolosko.spacex.core.UserSettings
 import com.avolosko.spacex.data.RocketsRepository
 import com.avolosko.spacex.db.entity.RocketEntity
-import com.avolosko.spacex.ui.AbsPresenter
 import javax.inject.Inject
 
 class RocketsListPresenter @Inject constructor(
-    private var userSettings: UserSettings,
     private var view: RocketsListContract.View?,
-    private val repository: RocketsRepository
-) : AbsPresenter(), RocketsListContract.Presenter {
+    private val repository: RocketsRepository,
+    private var userSettings: UserSettings
+) : RocketsListContract.Presenter {
 
     private var localRockets: List<RocketEntity> = emptyList()
 

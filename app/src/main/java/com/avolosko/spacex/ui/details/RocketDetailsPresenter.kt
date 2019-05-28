@@ -2,14 +2,13 @@ package com.avolosko.spacex.ui.details
 
 import com.avolosko.spacex.data.LaunchesRepository
 import com.avolosko.spacex.db.entity.LaunchEntity
-import com.avolosko.spacex.ui.AbsPresenter
 import lecho.lib.hellocharts.model.*
+import javax.inject.Inject
 
-class RocketDetailsPresenter(
+class RocketDetailsPresenter @Inject constructor(
     private var view: RocketDetailsContract.View?,
     private val repository: LaunchesRepository
-) :
-    AbsPresenter(), RocketDetailsContract.Presenter {
+) : RocketDetailsContract.Presenter {
 
     override fun start() {
         //no-op
@@ -22,7 +21,7 @@ class RocketDetailsPresenter(
     override fun loadLaunches(force: Boolean, rocketId: String) {
         view?.showProgress()
 
-        repository.getLaunches(force,  object : LaunchesRepository.Callback {
+        repository.getLaunches(force, object : LaunchesRepository.Callback {
             override fun onSuccess(launches: List<LaunchEntity>) {
                 view?.hideProgress()
 
@@ -43,8 +42,8 @@ class RocketDetailsPresenter(
         val yearLaunches = mutableMapOf<Int, Int>()
         all.forEach {
             if (yearLaunches.contains(it.launchYear)) {
-                val launches = yearLaunches[it.launchYear]
-                yearLaunches[it.launchYear] = launches!! + 1
+                val launches = yearLaunches.getValue(it.launchYear)
+                yearLaunches[it.launchYear] = launches + 1
             } else {
                 yearLaunches[it.launchYear] = 1
             }

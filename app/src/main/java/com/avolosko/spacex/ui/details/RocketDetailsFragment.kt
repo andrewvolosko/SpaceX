@@ -9,23 +9,15 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.avolosko.spacex.BASE_URL
 import com.avolosko.spacex.R
-import com.avolosko.spacex.TIMEOUT
-import com.avolosko.spacex.api.LaunchesApi
-import com.avolosko.spacex.api.endpoints.LaunchesEndpoint
-import com.avolosko.spacex.api.mapper.LaunchMapper
-import com.avolosko.spacex.data.LaunchesRepositoryImpl
-import com.avolosko.spacex.db.AppDatabase
-import com.avolosko.spacex.db.LaunchesLocalDataSource
+import com.avolosko.spacex.SpaceXApplication
 import com.avolosko.spacex.db.entity.LaunchEntity
-import com.avolosko.spacex.util.AppExecutors
+import com.avolosko.spacex.ui.internal.di.DaggerViewComponent
+import com.avolosko.spacex.ui.internal.di.PresentationModule
+import com.avolosko.spacex.ui.internal.di.ViewModule
 import kotlinx.android.synthetic.main.fragment_rocket_details.*
 import lecho.lib.hellocharts.model.LineChartData
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class RocketDetailsFragment : Fragment(), RocketDetailsContract.View {
 
@@ -45,10 +37,26 @@ class RocketDetailsFragment : Fragment(), RocketDetailsContract.View {
     }
 
     private lateinit var adapter: RocketDetailsAdapter
-
-    //TODO use dagger
-    private var presenter: RocketDetailsContract.Presenter? = null
     private lateinit var rocketId: String
+
+    @Inject
+    lateinit var presenter: RocketDetailsContract.Presenter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        onInitializeInjection()
+    }
+
+    override fun onInitializeInjection() {
+        val app = activity!!.application as SpaceXApplication
+
+        DaggerViewComponent.builder()
+            .applicationComponent(app.getApplicationComponent())
+            .viewModule(ViewModule(this))
+            .presentationModule(PresentationModule())
+            .build()
+            .inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_rocket_details, container, false)
@@ -56,64 +64,47 @@ class RocketDetailsFragment : Fragment(), RocketDetailsContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val client = OkHttpClient.Builder()
-            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
-            .build()
-
-        val retrofitBase = Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        val dataSource = LaunchesApi(retrofitBase.create(LaunchesEndpoint::class.java), LaunchMapper())
-        val localDataSource = LaunchesLocalDataSource(AppDatabase.getInstance(activity!!).launchesDao())
-        val repository = LaunchesRepositoryImpl(AppExecutors(), dataSource, localDataSource)
-
-        presenter = RocketDetailsPresenter(this, repository)
         adapter = RocketDetailsAdapter()
 
         detailsRV.addItemDecoration(DividerItemDecoration(activity, RecyclerView.VERTICAL))
         detailsRV.layoutManager = LinearLayoutManager(activity)
         detailsRV.adapter = adapter
 
-        extractParams()
-
+        renderDescription(getRocketDescription())
         progress.setOnRefreshListener {
-            presenter!!.loadLaunches(true, rocketId)
+            presenter.loadLaunches(true, rocketId)
         }
     }
 
     override fun onStart() {
         super.onStart()
-        presenter!!.start()
+        presenter.start()
+        presenter.loadLaunches(false, getRocketId())
     }
 
     override fun onStop() {
         super.onStop()
-        presenter!!.stop()
+        presenter.stop()
     }
 
-    private fun extractParams() {
-        rocketId = arguments!!.getString(ARG_ID)!!
-        val description = arguments!!.getString(ARG_DESC)
+    private fun getRocketId(): String {
+        return arguments!!.getString(ARG_ID)!!
+    }
 
-        renderDescription(description!!)
-        presenter!!.loadLaunches(false, rocketId)
+    private fun getRocketDescription(): String {
+        return arguments!!.getString(ARG_DESC)!!
     }
 
     private fun renderDescription(label: String) {
         description.text = label
     }
 
-    override fun renderGraph(launches: LineChartData) {
-        chart.lineChartData = launches
+    override fun renderGraph(chartData: LineChartData) {
+        chart.lineChartData = chartData
     }
 
-    override fun renderLaunches(all: List<LaunchEntity>) {
-        adapter.setLaunches(all)
+    override fun renderLaunches(launches: List<LaunchEntity>) {
+        adapter.setLaunches(launches)
         adapter.notifyDataSetChanged()
     }
 
@@ -126,6 +117,6 @@ class RocketDetailsFragment : Fragment(), RocketDetailsContract.View {
     }
 
     override fun renderError() {
-        Snackbar.make(rootView, R.string.error_general, Snackbar.LENGTH_SHORT)
+        Snackbar.make(rootView, R.string.failed_load_launches, Snackbar.LENGTH_SHORT)
     }
 }
