@@ -8,6 +8,6 @@ data class LaunchResponse(
     @SerializedName("launch_success") val launchStatus: Boolean,
     @SerializedName("launch_date_unix") val startDate: Long,
     @SerializedName("launch_year") val launchYear: String,
-    @SerializedName("links")val links: Links,
+    @SerializedName("links")val links: LinksResponse,
     @SerializedName("rocket")val rocket: RocketResponse
 )
